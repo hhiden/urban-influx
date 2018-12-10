@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: urban-push-influx
+  labels:
+    app: urban-data-influx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: urban-data-influx
+  template:
+    metadata:
+      labels:
+        app: urban-data-influx
+    spec:
+      containers:
+      - name: nginx
+        image: hhiden/influx:latest
+        env:
+        - name: INFLUX_DB_HOST
+          value: "http://influxdb-svc:8086"
+        - name: INFLUX_DB_NAME
+          value: "udb"
+

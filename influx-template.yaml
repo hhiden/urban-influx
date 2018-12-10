@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: urbandb
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      metrics: urbandb
+    name: urban-svc
+  spec:
+    ports:
+    - name: upload
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      metrics: urbandb
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}  
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      metrics: urbandb
+    name: urbandb
+  spec:
+    replicas: 1
+    selector:
+      metrics: urbandb
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          metrics: urbandb
+      spec:
+        containers:
+        - env:
+          - name: INFLUX_DB_HOST
+            value: "http://influxdb-svc:8086"
+          - name: INFLUX_DB_NAME
+            value: "udp"
+          image: hhiden/influx:latest
+          imagePullPolicy: Always
+          name: urbandb
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+    test: false
+    triggers:
+    - type: ConfigChange    
