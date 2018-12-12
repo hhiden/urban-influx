@@ -23,15 +23,13 @@ oc apply -f https://gist.githubusercontent.com/sjwoodman/ce869f8354e1e757f76c4ec
 wait_for_all_pods `oc project -q`
 
 # KafkaEventSource CRD
-kubectl create -f https://github.com/sjwoodman/eventing-sources/blob/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/crds/sources_v1alpha1_kafkaeventsource_crd.yaml
+oc create -f https://raw.githubusercontent.com/sjwoodman/eventing-sources/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/crds/sources_v1alpha1_kafkaeventsource_crd.yaml
 
 # Operator
-kubectl create -f https://github.com/sjwoodman/eventing-sources/blob/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/service_account.yaml
-kubectl create -f https://github.com/sjwoodman/eventing-sources/blob/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/role.yaml
-kubectl create -f https://github.com/sjwoodman/eventing-sources/blob/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/role_binding.yaml
-kubectl create -f https://github.com/sjwoodman/eventing-sources/blob/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/operator.yaml
+oc create -f https://raw.githubusercontent.com/sjwoodman/eventing-sources/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/service_account.yaml
+oc create -f https://raw.githubusercontent.com/sjwoodman/eventing-sources/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/role.yaml
+oc create -f https://raw.githubusercontent.com/sjwoodman/eventing-sources/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/role_binding.yaml
+oc create -f https://raw.githubusercontent.com/sjwoodman/eventing-sources/kafkaeventsource/contrib/kafka/kafkaeventsource-operator/deploy/operator.yaml
 
-# Wait for pods
+#TODO: Wait for pods
 wait_for_all_pods `oc project -q`
-
-# TODO: Install Grafana, Influx and WSS...
