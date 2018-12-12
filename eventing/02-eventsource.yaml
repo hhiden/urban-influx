@@ -1,0 +1,13 @@
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: KafkaEventSource
+metadata:
+  name: urban-kafkaeventsource
+spec:
+  bootstrap: my-cluster-kafka-bootstrap.myproject.svc.cluster.local:9092
+  topic: uodata
+  replicas: 1
+  sink:
+    apiVersion: eventing.knative.dev/v1alpha1
+    kind: Channel
+    name: urbanchannel
+

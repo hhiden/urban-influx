@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: grafana
+objects:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: grafana-data
+  spec:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      metrics: grafana
+    name: grafana-svc
+  spec:
+    ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+      name: grafanaport
+    selector:
+      metrics: grafana
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      metrics: grafana
+    name: grafana
+  spec:
+    replicas: 1
+    selector:
+      metrics: grafana
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          metrics: grafana
+      spec:
+        containers:
+        - env:
+          - name: INFLUXDB_HOST
+            value: influxdb-svc
+          image: rhmap/grafana-openshift
+          imagePullPolicy: Always
+          name: grafana
+          ports:
+          - containerPort: 3000
+            protocol: TCP
+          volumeMounts:
+          - mountPath: /var
+            name: grafana-data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: grafana-data
+          persistentVolumeClaim:
+            claimName: grafana-data
+    test: false
+    triggers:
+    - type: ConfigChange
+  status: {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    creationTimestamp: null
+    labels:
+      metrics: grafana
+    name: grafana-route
+  spec:
+    to:
+      kind: Service
+      name: grafana-svc
